@@ -154,6 +154,26 @@ namespace blacksmith {
     
     virtual uint8_t type() const override;
   };
+
+  template<>
+  class ListTag<void> : public TypelessList {
+  public:
+    int32_t length = 0;
+
+    ListTag() = default;
+    ListTag(string name, int32_t length)
+      : TypelessList(name), length(length) { }
+    ListTag(int32_t length)
+      : length(length) { }
+    ListTag(const ListTag &other) = default;
+    ListTag(ListTag &&other) noexcept = default;
+    ~ListTag() noexcept = default;
+
+    ListTag& operator=(const ListTag &other) = default;
+    ListTag& operator=(ListTag &&other) noexcept = default;
+    
+    virtual uint8_t type() const override;
+  };
   
   class CompoundTag : public Tag {
   public:

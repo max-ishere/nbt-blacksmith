@@ -75,6 +75,11 @@ namespace blacksmith {
   }
 
   template<>
+  sbin& operator<<(sbin& stream, const ListTag<void>& t);
+  template<>
+  sbin& operator>>(sbin& stream, ListTag<void>& t);
+
+  template<>
   uint8_t ListTag<CompoundTag>::type() const;
 
   sbin& operator<<(sbin&, const CompoundTag&);

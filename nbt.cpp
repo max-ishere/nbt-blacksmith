@@ -289,7 +289,10 @@ namespace blacksmith {
       break;
     }
     case END: {
-      
+      ListTag<void> tag;
+      stream >> tag;
+      t = make_shared<ListTag<void> >(tag);
+      break;
     } 
     default: {
       int32_t is_null = 0;
@@ -311,6 +314,29 @@ namespace blacksmith {
       break;
     }
     }
+    return stream;
+  }
+
+  template<>
+  sbin& operator<<(sbin& stream, const ListTag<void>& t) {
+    stream << t.kind() << t.name << t.type()
+	   << t.length;
+    return stream;
+  }
+  template<>
+  sbin& operator>>(sbin& stream, ListTag<void>& t) {
+    if (stream.peek() != t.kind())
+      return stream;
+    auto cur = stream.cur();
+    stream.get();
+
+    stream >> t.name;
+    if (stream.get() != t.type()) {
+      stream.seek(cur);
+      return stream;
+    }
+
+    stream >> t.length;
     return stream;
   }
   
