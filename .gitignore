@@ -2,9 +2,9 @@ CMakeCache.txt
 CMakeFiles
 cmake_install.cmake
 Makefile
-
+*~
+#*#
 files
-hexify.sh
 
 main
 main.cpp
