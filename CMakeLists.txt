@@ -13,9 +13,3 @@ add_subdirectory(src)
 
 add_executable(main main.cpp)
 target_link_libraries(main nbt-blacksmith)
-
-add_executable(region-tool region-tool.cpp)
-target_link_libraries(region-tool nbt-blacksmith)
-
-add_executable(test test.cpp)
-target_link_libraries(test nbt-blacksmith)

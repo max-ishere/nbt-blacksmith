@@ -3,15 +3,12 @@ CMakeFiles
 cmake_install.cmake
 Makefile
 *~
-#*#
+\#*\#
 files
+build/**
 
-main
 main.cpp
-test
-test.cpp
-test.hpp
-region-tool
-region-tool.cpp
+
+test-files/covertest
 
 use-cases

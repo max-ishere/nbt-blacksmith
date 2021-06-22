@@ -74,10 +74,9 @@ namespace blacksmith {
       break;
     }
     case LIST: {
-      // REMOVE, work in progress!
-      // This will cause bugs because it skips the rest of the data.
-      stream.seek(stream.end());
-      return stream;
+      // #warning "List<List> is diabled."
+      // stream.seek(stream.end());
+      // return stream;
       
       ListTag<shared_ptr<TypelessList> > tag;
       stream >> tag;
