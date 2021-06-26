@@ -10,6 +10,7 @@ add_compile_options(
 
 include_directories(include)
 add_subdirectory(src)
+add_subdirectory(tests)
 
 add_executable(main main.cpp)
 target_link_libraries(main nbt-blacksmith)
