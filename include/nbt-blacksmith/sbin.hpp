@@ -9,10 +9,10 @@ namespace blacksmith {
   using std::vector;
   using std::string;
   using std::shared_ptr;
+  
   class sbin {
     vector<uint8_t> bin = { };
     vector<uint8_t>::iterator it = bin.begin();
-    bool eos_flag = true;
     
   public:
     sbin() = default;
@@ -66,8 +66,6 @@ namespace blacksmith {
       bin.push_back((uint8_t) (t >> (i * 8) & 0xff));
   
     it = bin.begin();
-    eos_flag = false;
-  
     return *this;
   }
     
@@ -86,7 +84,6 @@ namespace blacksmith {
   
     if (it >= bin.end()) {
       it = bin.end();
-      eos_flag = true;
     }
     return *this;
   }

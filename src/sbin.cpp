@@ -6,20 +6,12 @@ namespace blacksmith {
   
   sbin::sbin(const vector<uint8_t>& bin) : bin(bin) {
     it = this->bin.begin();
-    if (bin.begin() == bin.end())
-      eos_flag = true;
-    else
-      eos_flag = false;
   }
 
   sbin::sbin(std::istream_iterator<uint8_t>&start,
 	     std::istream_iterator<uint8_t>&end) :
     bin(start, end) {
     it = this->bin.begin();
-    if (bin.begin() == bin.end())
-      eos_flag = true;
-    else
-      eos_flag = false;
   }
 
   vector<uint8_t>::iterator sbin::begin() {
@@ -37,7 +29,6 @@ namespace blacksmith {
   void sbin::seek(vector<uint8_t>::iterator it) {
     if (bin.begin() <= it && it <= bin.end()) {
       this->it = it;
-      eos_flag = false;
     }
   }
 
@@ -45,11 +36,14 @@ namespace blacksmith {
     return bin.size();
   }
   void sbin::resize(size_t n) {
-    bin.resize(n);
+    resize(n, 0);
   }
   
   void sbin::resize(size_t n, uint8_t val) {
+    size_t old_capacity = bin.capacity();
     bin.resize(n, val);
+    if (bin.capacity() != old_capacity)
+      it = bin.begin();
   }
 
   size_t sbin::capacity() const {
@@ -66,8 +60,6 @@ namespace blacksmith {
     if (it < bin.begin() || bin.end() <= it)
       return 0;
     else {
-      if (it + 1 == bin.end())
-	eos_flag = true;
       return *it++;
     }
   }
@@ -90,12 +82,7 @@ namespace blacksmith {
   const sbin& sbin::operator=(const sbin& other) {
     this->bin = other.bin;
 
-    it = this->bin.begin();
-    if (bin.begin() == bin.end())
-      eos_flag = true;
-    else
-      eos_flag = false;
-    
+    it = this->bin.begin();  
     return *this;
   }
   
@@ -103,18 +90,12 @@ namespace blacksmith {
     this->bin = other;
 
     it = this->bin.begin();
-    if (bin.begin() == bin.end())
-      eos_flag = true;
-    else
-      eos_flag = false;
-    
     return *this;
   }
   
   void sbin::clear() {
     bin.clear();
     seek(bin.begin());
-    eos_flag = false;
   }
   
   bool sbin::empty() {
@@ -122,11 +103,11 @@ namespace blacksmith {
   }
 
   sbin::operator bool() {
-    return !eos_flag;
+    return !eos();
   }
   
   bool sbin::eos() {
-    return eos_flag;
+    return cur() == end();
   }
   
   sbin& operator<<(sbin& stream, const string& str) {
