@@ -1,4 +1,4 @@
-#include "sbin.hpp"
+#include "nbt-blacksmith/sbin.hpp"
 #include <fstream>
 
 namespace blacksmith {

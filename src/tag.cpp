@@ -1,4 +1,4 @@
-#include "../include/nbt.hpp"
+#include "nbt-blacksmith/nbt.hpp"
 #include <iostream>
 #include <iomanip>
 namespace blacksmith {

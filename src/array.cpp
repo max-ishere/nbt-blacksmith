@@ -1,4 +1,4 @@
-#include "../include/array.hpp"
+#include "nbt-blacksmith/array.hpp"
 namespace blacksmith {
   template<>
   uint8_t ArrayTag<uint8_t>::type() const {

@@ -4,8 +4,8 @@
 #include <string>
 #include <memory>
 
-#include <ios-bin.hpp>
-#include <nbt.hpp>
+#include <nbt-blacksmith/ios-bin.hpp>
+#include <nbt-blacksmith/nbt.hpp>
 
 using namespace std;
 using namespace blacksmith;

@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <string>
-#include "./tag.hpp"
+#include "tag.hpp"
 namespace blacksmith {
   using std::string;
   using std::vector;

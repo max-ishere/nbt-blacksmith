@@ -1,4 +1,4 @@
-#include "../include/compound.hpp"
+#include "nbt-blacksmith/compound.hpp"
 namespace blacksmith {
     sbin& operator<<(sbin& stream, const CompoundTag& t) {
     stream << nbt_type::COMPOUND << t.name

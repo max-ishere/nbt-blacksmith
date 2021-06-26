@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "./tag.hpp"
+#include "tag.hpp"
 namespace blacksmith {
   using std::string;
   

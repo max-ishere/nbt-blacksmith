@@ -1,4 +1,4 @@
-#include "../include/primitive.hpp"
+#include "nbt-blacksmith/primitive.hpp"
 namespace blacksmith {
   template<>
   uint8_t PrimitiveTag<uint8_t>::type() const {

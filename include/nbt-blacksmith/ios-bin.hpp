@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 #include <iomanip>
-#include <indent_facet.hpp>
+#include <iostream-indenter/indent_facet.hpp>
 #include "nbt.hpp"
 
 namespace blacksmith {

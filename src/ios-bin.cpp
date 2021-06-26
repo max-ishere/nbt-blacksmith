@@ -1,4 +1,4 @@
-#include "ios-bin.hpp"
+#include "nbt-blacksmith/ios-bin.hpp"
 #include <iomanip>
 namespace blacksmith {
   std::ostream& operator<<(ostream& os, sbin& stream) {
