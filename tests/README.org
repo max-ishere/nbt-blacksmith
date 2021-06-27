@@ -1,4 +1,4 @@
-#+title: Explanation of ~for (i <= 2)~
+#+title: Explanation of for (i <= 2)
 
 * Loop coverage
 
