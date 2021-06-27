@@ -17,8 +17,8 @@ namespace blacksmith {
   public:
     sbin() = default;
     sbin(const vector<uint8_t>&);
-    sbin(std::istream_iterator<unsigned char>&,
-	 std::istream_iterator<unsigned char>&);
+    sbin(std::istream_iterator<uint8_t>&,
+	 std::istream_iterator<uint8_t>&);
 
     vector<uint8_t>::iterator begin();
     vector<uint8_t>::iterator end();
