@@ -1,0 +1,13 @@
+#+title: Explanation of ~for (i <= 2)~
+
+* Loop coverage
+
+Following is an insert from [[https://www.learncpp.com/cpp-tutorial/code-coverage/][Code coverage, learncpp.com]].
+
+#+begin_quote
+Loop coverage (informally called the 0, 1, 2 test) says that if you have a loop in your code, you should ensure it works properly when it iterates 0 times, 1 time, and 2 times. If it works correctly for the 2-iteration case, it should work correctly for all iterations greater than 2. These three tests therefore cover all possibilities (since a loop can’t execute a negative number of times).
+#+end_quote
+
+The above is the reason why I iterate from 0 to 2 or backwards. I want the ~2~ to be emphasis here.
+
+This is a note to myself and others if you may have questions. I usually do.
