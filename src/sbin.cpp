@@ -57,18 +57,17 @@ namespace blacksmith {
   }
   
   uint8_t sbin::get() {
-    if (it < bin.begin() || bin.end() <= it)
-      return 0;
-    else {
+    if (bin.begin() <= it && it < bin.end())
       return *it++;
-    }
+    else 
+      return 0;
   }
 
   uint8_t sbin::peek() {
-    if (it < bin.begin() && bin.end() <= it)
-      return 0;
-    else
+    if (bin.begin() <= it && it < bin.end())
       return *(it);
+    else 
+      return 0;
   }
 
   bool sbin::operator==(const sbin& other) const {
