@@ -44,7 +44,7 @@ namespace blacksmith {
     
     virtual uint8_t type() const final override;
   };
-
+  
   
   template<>
   class ListTag<void> : public TypelessList {

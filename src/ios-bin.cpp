@@ -163,7 +163,8 @@ namespace blacksmith {
 	os << dynamic_cast<const ListTag<string>&>(*t);
 	break;
       case LIST:
-	// not supported, may be coming soon
+#warning "Nested lists are not supported in the current version of iostream utility"
+	//os << dynamic_cast<const ListTag<TypelessList>&>(*t);
 	break;
       case COMPOUND:
 	os << dynamic_cast<const ListTag<CompoundTag>&>(*t);

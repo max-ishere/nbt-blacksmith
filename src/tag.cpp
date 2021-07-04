@@ -72,7 +72,7 @@ namespace blacksmith {
 	stream << dynamic_cast<const ListTag<string>&>(*t);
 	break;
       case LIST:
-	// not supported, may be coming soon
+#warning "Recursive lists are not supported in this version"
 	break;
       case COMPOUND:
 	stream << dynamic_cast<const ListTag<CompoundTag>&>(*t);
@@ -92,6 +92,7 @@ namespace blacksmith {
     }
     return stream;
   }
+  
   sbin& operator>>(sbin& stream, shared_ptr<Tag>& t) {
     using std::cerr;
     using std::clog;
@@ -143,7 +144,7 @@ namespace blacksmith {
       t = make_shared<PrimitiveTag<string> >(tag);
       break;
     }
-      
+     
     case BYTE_ARRAY: {
       ArrayTag<uint8_t> tag;
       stream >> tag;
@@ -178,9 +179,10 @@ namespace blacksmith {
     }
       
     default:
+#warning "This code shall be removed in the final version of the library"
       cerr << "Badbyte at position 0x" << hex
 	   << distance(stream.begin(), stream.cur())
-	   << " 0x" << setw(2) << setfill('0')
+	   << " with value 0x" << setw(2) << setfill('0')
 	   << (int) stream.peek()
 	   << setfill(' ') << dec << "\nExpected Tag ID.\n";
       stream.seek(stream.end());
@@ -188,7 +190,10 @@ namespace blacksmith {
     return stream;
   }
   
-  bool operator==(const Tag&, const Tag&) { return false; }
+  bool operator==(const Tag&, const Tag&) {
+#warning "Not implemented"
+    return false;
+  }
 }
 
 
