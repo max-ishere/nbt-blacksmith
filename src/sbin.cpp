@@ -51,9 +51,10 @@ namespace blacksmith {
   }
 
   void sbin::reserve(size_t n) {
-    size_t i = distance(bin.begin(), it);
+    size_t old_capacity = bin.capacity();
     bin.reserve(n);
-    it = bin.begin() + i;
+    if (n != old_capacity)
+      it = bin.begin();
   }
   
   uint8_t sbin::get() {
@@ -106,7 +107,7 @@ namespace blacksmith {
   }
   
   bool sbin::eos() {
-    return cur() == end();
+    return cur() == end() || empty();
   }
   
   sbin& operator<<(sbin& stream, const string& str) {
