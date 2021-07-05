@@ -26,6 +26,19 @@ namespace blacksmith {
     return it;
   }
 
+  
+  vector<uint8_t>::const_iterator sbin::begin() const {
+    return bin.begin();
+  }
+  
+  vector<uint8_t>::const_iterator sbin::end() const {
+    return bin.end();
+  }
+  
+  vector<uint8_t>::const_iterator sbin::cur() const {
+    return it;
+  }
+
   void sbin::seek(vector<uint8_t>::iterator it) {
     if (bin.begin() <= it && it <= bin.end()) {
       this->it = it;
@@ -81,8 +94,8 @@ namespace blacksmith {
 
   const sbin& sbin::operator=(const sbin& other) {
     this->bin = other.bin;
-
-    it = this->bin.begin();  
+    this->it = this->begin() + distance(other.begin(), other.cur());
+    
     return *this;
   }
   

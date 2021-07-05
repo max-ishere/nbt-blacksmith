@@ -20,10 +20,14 @@ namespace blacksmith {
     sbin(std::istream_iterator<uint8_t>&,
 	 std::istream_iterator<uint8_t>&);
 
+    vector<uint8_t>::const_iterator begin() const;
+    vector<uint8_t>::const_iterator end() const;
+    vector<uint8_t>::const_iterator cur() const;
+
     vector<uint8_t>::iterator begin();
     vector<uint8_t>::iterator end();
     vector<uint8_t>::iterator cur();
-    
+
     void seek(vector<uint8_t>::iterator);
     
     template <class InputIterator>

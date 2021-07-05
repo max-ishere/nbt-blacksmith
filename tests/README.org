@@ -1,6 +1,83 @@
-#+title: Explanation of for (i <= 2)
+#+title: Tests
 
-* Loop coverage
+The =main()= funtion for google test is in =test.cpp=. This file gets linked with other files in =tests/= to create the test executable. By default CMake will run google test on every build for conviience. Following is a list of tested objects.
+
+* Stream
+
+=sbin= is one of the utility classes that is used for parsing and serialising NBT tags in this library. It's public funtions are described below.
+
+** Iterator validity
+
+- Construtor :: Always =begin()=
+- resize()
+  - Size became smaller :: =begin()=
+  - Size didn't change or got larger :: Keeps the position at the same distance from =begin()=
+- clear :: Always =begin()=
+- operator= (assignment) :: At the same distance as in right hand side.
+- reserve() :: Keeps the position at the same distance from =begin()=
+
+** Class definition
+
+Simply a pair of =vector<uint8_t>= and =iterator=. =vector= is used as the storage container and =iterator= is used to keep the position in the data after parsing or serialising is complete. Both are private members to prevent users from invalidating the =iterator=.
+
+** Constructor
+
+- Default constructor :: Creates an empty stream. 
+- =sbin(const vector<uint8_t>&);= :: Will fill the member vector with data from parameter vector
+- =sbin(std::istream_iterator<uint8_t>&, std::istream_iterator<uint8_t>&);= :: Fills the member vector with data from iterators. Can be used to get data from =fstream=
+
+** operator=()
+
+- =const sbin& operator=(const sbin&);= :: Copies the data from one vector to another. Also sets the =cur()= at the same distance from =begin()= as in parent vector
+- =const sbin& operator=(const vector<uint8_t>&);= :: Replaces member vector data with parameter vector data and sets the =cur()= to the begining of the vector
+
+** operator==(), operator!=()
+
+Only compare nested data values. =cur()= positions have no impact on the result of the comparison.
+
+** get()
+
+- At the begining or in the middle of the stream (before =end() - 1=) :: Returns value of =cur()=. Then advances the =cur()= to the next position
+- Last element of the stream (=stream.end() - 1=) :: Returns the value of =cur()=. Then advances the =cur()=. This will set the =eos= (End Ef Etream) flag to =true=
+- After the last element (=stream.end()=) :: Always returns 0. Reason: Compound tag will read data untill it encounters a 0 (=0x00=). All parsing functions will not read if Tag ID is not in range 1-12. Thus returning a 0 will save you from infinite loops or recursion
+
+** peek()
+
+Acts in the same way as =get()= except it does not advance =cur()=.
+
+** seek()
+
+- Parameter iterator is within range [ =begin()= ; =end()= ) :: Sets the iterator to that position
+-  iterator is out of range :: Keeps the position at the same distance from =begin()=
+
+** operator>>() (parsing)
+
+Default function template will set each byte in output object to values in the stream in big endian order.
+
+** operator<<() (serialising)
+
+Default function template will read the input object byte by byte and append those bytes to the stream in big endian order.
+
+** eos()
+
+Can be used to detect end of stream. If =cur()= points to =end()= or =size()= is 0 returns true. Otherwise false.
+
+** std::vector interfaces
+
+Following functions act in the same way as defined in C++ standart:
+
+- capacity()
+- reserve()
+- resize()
+- size()
+- empty()
+- clear()
+
+Except =resize()= which fills additional space with 0.
+
+* Explanation of for (i <= 2)
+
+** Loop coverage
 
 Following is an insert from [[https://www.learncpp.com/cpp-tutorial/code-coverage/][Code coverage, learncpp.com]].
 
@@ -10,4 +87,4 @@ Loop coverage (informally called the 0, 1, 2 test) says that if you have a loop 
 
 The above is the reason why I iterate from 0 to 2 or backwards. I want the ~2~ to be emphasis here.
 
-This is a note to myself and others if you may have questions. I usually do.
+/This is a note to myself and others if you may have questions. I usually do when I see weird code./

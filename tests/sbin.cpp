@@ -209,20 +209,24 @@ TEST(sbin, assign_operator) {
   sbin left, right;
   
   for (int8_t size = 2; size >= 0; size--) {
-    right.clear();
-    right.resize(size, 0xbb);
-    left = right;
-    EXPECT_TRUE(left == right);
+    for (size_t position = 0; position < size; position++) {
+      right.clear();
+      right.resize(size, 0xbb);
+      right.seek(right.begin() + position);
+      
+      left = right;
+      EXPECT_TRUE(left == right);
     
-    EXPECT_EQ(left.begin(), left.cur());
-    EXPECT_EQ(right.begin(), right.cur());
-    if (size != 0) {
-      EXPECT_FALSE(left.eos());
-      EXPECT_FALSE(right.eos());
-    }
-    else {
-      EXPECT_TRUE(left.eos());
-      EXPECT_TRUE(right.eos());
+      EXPECT_EQ(distance(left.begin(), left.cur()), position);
+      EXPECT_EQ(distance(right.begin(), right.cur()), position);
+      if (size != 0) {
+	EXPECT_FALSE(left.eos());
+	EXPECT_FALSE(right.eos());
+      }
+      else {
+	EXPECT_TRUE(left.eos());
+	EXPECT_TRUE(right.eos());
+      }
     }
   }
 }
