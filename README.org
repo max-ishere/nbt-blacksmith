@@ -5,7 +5,9 @@ A C++ library for parsing, editing and serialising NBT data used in Java edition
 
 * Documentation
 
-Currently there is none and this file is supposed to get you started understanding the library. It is a relatively small project so you could read through the entire code base in an hour or so.
+Currently the only docs are in =tests/README.org=, I will be figuring out a way to generate a github.io soon probably.
+
+That readme I mentioned is just a description of what tests do and I may get rid of it if that readme will prevent me from /just/ rewriting the tests or changing my mind about which implementation seems more logical or intuituve.
 
 * Scope and purpose
 
@@ -20,6 +22,17 @@ Currently the development has stopped and I am adding [[https://github.com/googl
 * Prerequisites
 
 You must have basic knowledge of C++ and some understanding of NBT.
+
+* Building the library
+
+It is a CMake project so all you need is this line in the terminal:
+
+#+begin_src shell
+# run this in the root of the project
+$ cmake -S . -B build
+#+end_src
+
+You should see CMake build an object library and automatically run google test. There is no sample executable yet.
 
 * About NBT standart
 

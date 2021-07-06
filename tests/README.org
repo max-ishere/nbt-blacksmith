@@ -6,7 +6,7 @@ The =main()= funtion for google test is in =test.cpp=. This file gets linked wit
 
 =sbin= is one of the utility classes that is used for parsing and serialising NBT tags in this library. It's public funtions are described below.
 
-** Iterator validity
+** Iterator validity for cur()
 
 - Construtor :: Always =begin()=
 - resize() ::
@@ -52,7 +52,7 @@ Returns an iterator to the current element in the stream.
 ** get()
 
 - At the begining or in the middle of the stream (before =end() - 1=) :: Returns value of =cur()=. Then advances the =cur()= to the next position
-- Last element of the stream (=stream.end() - 1=) :: Returns the value of =cur()=. Then advances the =cur()=. This will set the =eos= (End Ef Etream) flag to =true=
+- Last element of the stream (=end() - 1=) :: Returns the value of =cur()=. Then advances the =cur()=. This will set the =eos= (End Ef Etream) flag to =true=
 - After the last element (=stream.end()=) :: Always returns 0. Reason: Compound tag will read data untill it encounters a 0 (=0x00=). All parsing functions will not read if Tag ID is not in range 1-12. Thus returning a 0 will save you from infinite loops or recursion
 
 ** peek()
@@ -62,7 +62,7 @@ Acts in the same way as =get()= except it does not advance =cur()=.
 ** seek()
 
 - Parameter iterator is within range [ =begin()= ; =end()= ) :: Sets the iterator to that position
-- Parameter iterator is out of range :: Keeps the position at the same distance from =begin()=
+- Parameter iterator is out of range :: Keeps the position at the same distance from =begin()=. (Has no effect)
 
 ** operator>> (parsing)
 
