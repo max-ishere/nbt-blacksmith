@@ -53,9 +53,15 @@ namespace blacksmith {
   }
   
   void sbin::resize(size_t n, uint8_t val) {
-    size_t old_capacity = bin.capacity();
+    size_t old_size = bin.size();
+    size_t old_distance = distance(begin(), cur());
+    
     bin.resize(n, val);
-    if (bin.capacity() != old_capacity)
+    
+    if (n >= old_size)
+      it = bin.begin() + old_distance;
+  
+    else
       it = bin.begin();
   }
 
@@ -65,9 +71,10 @@ namespace blacksmith {
 
   void sbin::reserve(size_t n) {
     size_t old_capacity = bin.capacity();
+    size_t old_distance = distance(bin.begin(), it);
     bin.reserve(n);
-    if (n != old_capacity)
-      it = bin.begin();
+
+    it = bin.begin() + old_distance;
   }
   
   uint8_t sbin::get() {

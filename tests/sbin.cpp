@@ -11,7 +11,7 @@ TEST(sbin, size) {
   EXPECT_TRUE(stream.eos());
   EXPECT_EQ(stream.size(), 0);
   EXPECT_EQ(stream.cur(), stream.begin());
-  
+
   for (int8_t i = 2; i >= 0; i--) {
     stream.resize(i);
 
@@ -24,15 +24,35 @@ TEST(sbin, size) {
     EXPECT_EQ(stream.cur(), stream.begin());
   }
 
-  stream.clear();
-  EXPECT_EQ(stream.begin(), stream.cur());
   for (uint8_t value = 0; value <= 2; value++)
-    for (uint8_t i = 0; i <= 2; i++) {
-      stream.resize(i, value);
+    for (uint8_t size = 0; size <= 2; size++) {
+      stream.clear();
+      stream.resize(size, value);
 
-      for (uint8_t &element : stream)
+      for (const uint8_t &element : stream)
 	EXPECT_EQ(element, value);
+
+      stream.clear();
+      stream.resize(size);
+
+      for (const uint8_t &element : stream)
+	EXPECT_EQ(element, 0);
     }
+
+  for (uint8_t old_size = 0; old_size <= 2; old_size++)
+    for (uint8_t new_size = 0; new_size <= 2; new_size++)
+      for (uint8_t position = 0; position < old_size; position++) {
+	stream.clear();
+	stream.resize(old_size);
+      
+	stream.seek(stream.begin() + position);
+	stream.resize(new_size);
+
+	if (new_size < old_size)
+	  EXPECT_TRUE(stream.cur() == stream.begin());
+	else
+	  EXPECT_EQ(stream.cur(), stream.begin() + position);
+      }
 }
 
 TEST(sbin, capacity) {
@@ -51,7 +71,7 @@ TEST(sbin, capacity) {
     EXPECT_EQ(stream.cur(), stream.begin());
     EXPECT_TRUE(stream.eos());
   }
-  
+
   for (int8_t i = 0; i <= 2; i++){
     size_t new_capacity = stream.capacity() + i;
     
@@ -79,7 +99,21 @@ TEST(sbin, capacity) {
       EXPECT_TRUE(stream.eos());
     else
       EXPECT_FALSE(stream.eos());
+    
   }
+
+  stream.resize(3);
+  
+  for (uint8_t old_capacity = 0; old_capacity <= 2; old_capacity++)
+    for (uint8_t new_capacity = 0; new_capacity <= 2; new_capacity++)
+      for (uint8_t position = 0; position < 3; position++) {
+	stream.reserve(old_capacity);
+      
+	stream.seek(stream.begin() + position);
+	stream.reserve(new_capacity);
+
+	EXPECT_EQ(stream.cur(), stream.begin() + position);
+      }
 }
 
 TEST(sbin, clear_empty) {
@@ -102,6 +136,7 @@ TEST(sbin, clear_empty) {
   stream.clear();
   EXPECT_TRUE(stream.empty());
   EXPECT_TRUE(stream.eos());
+  EXPECT_EQ(stream.begin(), stream.cur());
 }
 
 TEST(sbin, seek) {
@@ -129,18 +164,23 @@ TEST(sbin, seek) {
 
 TEST(sbin, get) {
   sbin stream;
-  const uint8_t RESERVED = 10;
-  stream.resize(RESERVED, 0xff);
+  const uint8_t RESERVED = 10,
+    REAL_DATA = 0xbb,
+    OVERFLOW_PROTECTION = 0xff;
+
+  ASSERT_NE(REAL_DATA, OVERFLOW_PROTECTION);
+  
+  stream.resize(RESERVED, OVERFLOW_PROTECTION);
   
   for (int8_t size = 2; size >= 0; size--) {
     stream.clear();
-    stream.resize(size, 0xbb);
+    stream.resize(size, REAL_DATA);
     
     for (int8_t i = 0; i < RESERVED; i++) {
       uint8_t result = stream.get();
       
       if (i < size) {
-	EXPECT_EQ(result, 0xbb);
+	EXPECT_EQ(result, REAL_DATA);
 
 	if (i == size - 1)
 	  EXPECT_TRUE(stream.eos());

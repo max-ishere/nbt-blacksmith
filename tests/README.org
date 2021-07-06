@@ -2,14 +2,14 @@
 
 The =main()= funtion for google test is in =test.cpp=. This file gets linked with other files in =tests/= to create the test executable. By default CMake will run google test on every build for conviience. Following is a list of tested objects.
 
-* Stream
+* sbin (Binary stream)
 
 =sbin= is one of the utility classes that is used for parsing and serialising NBT tags in this library. It's public funtions are described below.
 
 ** Iterator validity
 
 - Construtor :: Always =begin()=
-- resize()
+- resize() ::
   - Size became smaller :: =begin()=
   - Size didn't change or got larger :: Keeps the position at the same distance from =begin()=
 - clear :: Always =begin()=
@@ -22,18 +22,32 @@ Simply a pair of =vector<uint8_t>= and =iterator=. =vector= is used as the stora
 
 ** Constructor
 
-- Default constructor :: Creates an empty stream. 
+- Default constructor :: Creates an empty stream with no data and size of 0
 - =sbin(const vector<uint8_t>&);= :: Will fill the member vector with data from parameter vector
 - =sbin(std::istream_iterator<uint8_t>&, std::istream_iterator<uint8_t>&);= :: Fills the member vector with data from iterators. Can be used to get data from =fstream=
 
-** operator=()
+=cur()= always points to =begin()=.
+
+** operator=
 
 - =const sbin& operator=(const sbin&);= :: Copies the data from one vector to another. Also sets the =cur()= at the same distance from =begin()= as in parent vector
 - =const sbin& operator=(const vector<uint8_t>&);= :: Replaces member vector data with parameter vector data and sets the =cur()= to the begining of the vector
 
-** operator==(), operator!=()
+** operator==, operator!=
 
-Only compare nested data values. =cur()= positions have no impact on the result of the comparison.
+Only compares nested data values. =cur()= positions have no impact on the result of the comparison.
+
+** begin()
+
+Returns an iterator the first byte in the stream.
+
+** end()
+
+Returns an iterator pointing after the last byte in the stream.
+
+** cur()
+
+Returns an iterator to the current element in the stream.
 
 ** get()
 
@@ -48,32 +62,46 @@ Acts in the same way as =get()= except it does not advance =cur()=.
 ** seek()
 
 - Parameter iterator is within range [ =begin()= ; =end()= ) :: Sets the iterator to that position
--  iterator is out of range :: Keeps the position at the same distance from =begin()=
+- Parameter iterator is out of range :: Keeps the position at the same distance from =begin()=
 
-** operator>>() (parsing)
+** operator>> (parsing)
 
 Default function template will set each byte in output object to values in the stream in big endian order.
 
-** operator<<() (serialising)
+** operator<< (serialising)
 
 Default function template will read the input object byte by byte and append those bytes to the stream in big endian order.
 
+** resize()
+
+- =resize(size_t)= :: Acts in the same way as =resize(size_t, 0)= thus if the value is undefined it wont cause issues with reading garbage from newly allocated memory
+- =resize(size_t, uint8_t)= ::
+  - If new size is bigger or did not change :: Appends value of =uint8_t= to fill newly allocated memory. Keeps =cur()= at the same distance as it was before the call
+  - If new size is smaller :: Decreases the amount of bytes in the stream. =cur()= is set to =begin()=
+
+** size()
+
+Returns total amount of bytes in the stream. Equivalent to calling =vector::size()=.
+
+** reserve()
+
+Does not change the amount of data in the stream, but may reallocate memory to fit more elements. Equivalent to calling =vector::reserve()=. Has no effect on distance between =begin()= and =cur()=.
+
+** capacity()
+
+Returns maximum capacity of the stream. Note that =size()= could be smaller or equal to this value.
+
+** clear()
+
+Calls =vector::clear()= on member =vector=. Sets =cur()= to =begin()=.
+
+** empty()
+
+Returns true if total amount of bytes in the stream is 0.
+
 ** eos()
 
-Can be used to detect end of stream. If =cur()= points to =end()= or =size()= is 0 returns true. Otherwise false.
-
-** std::vector interfaces
-
-Following functions act in the same way as defined in C++ standart:
-
-- capacity()
-- reserve()
-- resize()
-- size()
-- empty()
-- clear()
-
-Except =resize()= which fills additional space with 0.
+Can be used to detect end of stream. If =cur()= points to =end()= or =size()= is 0 returns =true=. Otherwise =false=.
 
 * Explanation of for (i <= 2)
 
@@ -85,6 +113,6 @@ Following is an insert from [[https://www.learncpp.com/cpp-tutorial/code-coverag
 Loop coverage (informally called the 0, 1, 2 test) says that if you have a loop in your code, you should ensure it works properly when it iterates 0 times, 1 time, and 2 times. If it works correctly for the 2-iteration case, it should work correctly for all iterations greater than 2. These three tests therefore cover all possibilities (since a loop can’t execute a negative number of times).
 #+end_quote
 
-The above is the reason why I iterate from 0 to 2 or backwards. I want the ~2~ to be emphasis here.
+The above is the reason why I iterate from 0 to 2 or backwards. I want the =2= to be emphasis here.
 
 /This is a note to myself and others if you may have questions. I usually do when I see weird code./
