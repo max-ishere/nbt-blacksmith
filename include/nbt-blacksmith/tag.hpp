@@ -2,6 +2,7 @@
 #include <string>
 #include <cstdint>
 #include "sbin.hpp"
+
 namespace blacksmith {
   using std::string;
   

@@ -1,5 +1,6 @@
 #include "nbt-blacksmith/sbin.hpp"
 #include <fstream>
+#include <cstring>
 
 namespace blacksmith {
   using std::string;
@@ -153,6 +154,14 @@ namespace blacksmith {
     return stream;
   }
 
+  sbin& operator<<(sbin& stream, const char* str) {
+    stream << (int16_t) strlen(str);
+    
+    while (*str)
+      stream << *str++;
+    return stream;
+  }
+    
   sbin& operator<<(sbin& stream, const float& f) {
     stream << *(uint32_t*) &f;
     return stream;

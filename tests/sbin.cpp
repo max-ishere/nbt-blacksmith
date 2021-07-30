@@ -220,25 +220,46 @@ TEST(sbin, peek) {
   }
 }
 
+TEST(sbin, parsing) {
+  sbin stream;
+
+  uint8_t should_be_zero = 0;
+  stream >> should_be_zero;
+  EXPECT_EQ(should_be_zero, 0);
+  EXPECT_EQ(stream.cur(), stream.begin());
+
+  stream << (uint8_t) 0xff;
+  EXPECT_EQ(stream.cur(), stream.begin());
+
+  ASSERT_EQ(stream.size(), 1);
+  ASSERT_EQ(stream.peek(), 0xff);
+  
+  uint16_t two_bytes = 0;
+  stream >> two_bytes;
+  EXPECT_EQ(stream.cur(), stream.end());
+  EXPECT_EQ(two_bytes, 0xff00);
+  
+}
+
 TEST(sbin, eq_operator) {
   sbin left, right;
   EXPECT_TRUE(left == right);
 
-  for (int i = 0; i <= 2; i++) {
+  for (int size_left = 0; size_left <= 2; size_left++) {
     left.clear();
-    left.resize(i, 0xff);
+    left.resize(size_left, 0xff);
     
-    for (int j = 0; j <= 2; j++) {
+    for (int size_right = 0; size_right <= 2; size_right++) {
       right.clear();
-      right.resize(j, 0xff);
-      if (i == j)
+      right.resize(size_right, 0xff);
+      if (size_left == size_right)
 	EXPECT_TRUE(left == right);
       else
 	EXPECT_FALSE(left == right);
     }
     right.clear();
-    right.resize(i, 0x00);
-    if (i != 0)
+    right.resize(size_left, 0x00);
+    if (size_left != 0)
       EXPECT_FALSE(left == right);
     else
       EXPECT_TRUE(left == right);
@@ -252,36 +273,36 @@ TEST(sbin, assign_operator) {
     for (size_t position = 0; position < size; position++) {
       right.clear();
       right.resize(size, 0xbb);
-      right.seek(right.begin() + position);
+	right.seek(right.begin() + position);
       
-      left = right;
-      EXPECT_TRUE(left == right);
+	left = right;
+	EXPECT_TRUE(left == right);
     
-      EXPECT_EQ(distance(left.begin(), left.cur()), position);
-      EXPECT_EQ(distance(right.begin(), right.cur()), position);
-      if (size != 0) {
-	EXPECT_FALSE(left.eos());
-	EXPECT_FALSE(right.eos());
-      }
-      else {
-	EXPECT_TRUE(left.eos());
-	EXPECT_TRUE(right.eos());
+	EXPECT_EQ(distance(left.begin(), left.cur()), position);
+	EXPECT_EQ(distance(right.begin(), right.cur()), position);
+	if (size != 0) {
+	  EXPECT_FALSE(left.eos());
+	  EXPECT_FALSE(right.eos());
+	}
+	else {
+	  EXPECT_TRUE(left.eos());
+	  EXPECT_TRUE(right.eos());
+	}
       }
     }
   }
-}
 
-TEST(sbin, iterator_validity) {
-  {
-    sbin stream;
-    EXPECT_EQ(stream.begin(), stream.cur());
-  }
+  TEST(sbin, constructor) {
+    {
+      sbin stream;
+      EXPECT_EQ(stream.begin(), stream.cur());
+    }
 
-  for (uint8_t size = 0; size <= 2; size++) {
-    vector<uint8_t> data;
-    data.resize(size, 0xff);
-    sbin stream(data);
+    for (uint8_t size = 0; size <= 2; size++) {
+      vector<uint8_t> data;
+      data.resize(size, 0xff);
+      sbin stream(data);
     
-    EXPECT_EQ(stream.begin(), stream.cur());
+      EXPECT_EQ(stream.begin(), stream.cur());
+    }
   }
-}

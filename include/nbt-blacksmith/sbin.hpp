@@ -102,6 +102,9 @@ namespace blacksmith {
   sbin& operator<<(sbin& stream, const string& str);  
   sbin& operator>>(sbin& stream, string& str);
 
+  sbin& operator<<(sbin& stream, const char* str);  
+  sbin& operator>>(sbin& stream, char* str) = delete;
+  
   sbin& operator<<(sbin& stream, const float& f);  
   sbin& operator>>(sbin& stream, float& f);
   
