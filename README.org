@@ -1,5 +1,6 @@
 #+title: NBT Blacksmith
-#+toc: nil
+#+startup: showall
+#+include: d:/gl-bilgi/unwiki/settings/org-pages.org
 
 A C++ library for parsing, editing and serialising NBT data used in Java edition Minecraft.
 
@@ -74,25 +75,33 @@ Where: ID is =byte tagType= from NBT specs above.
 
 * Implementation
 
-If you spend some time reading the specs by Notch you will soon realize that there are 4 categories (kinds) of NBT tags:
+If you spend some time reading the specs by Notch you will soon realize that there are 4 categories (kinds) of NBT tags[fn:2]:
 
-- Primitive :: simply N bytes after the header depending on =sizeof(type)=
+- Primitive :: A non-array type
   - Byte
   - Short
   - Int
   - Long
   - Float
   - Double
-- Array :: =ID= defines the nested data type, nested data and it's properties are the same regardless of the nested type.
-  - Byte Array
   - String
+- Array :: Mono-type non-recusrive array container
+  - Byte Array
   - Int Array
   - Long Array
-- List :: =ID= is always =9=, but there is another =payload_ID= to identify the nested type. Stores data very similary to Array kind.
-- Compound :: Contains an array of nested data and ends with =0x00=
+- List :: Potentially[fn:3] recursive and multi-type array container
+- Compound :: Multitype potentially recursive container
 
-End tag is excluded from the list since it is useless and dangerous to keep in memory as a =class= or =struct=, except for one case (list of end tags) where it is useless as a separate type either.
+Attempting to create an object of invalid tag (e.g. =ArrayTag<unsigned int>= instead of signed version) will result in =undefined reference to [Kind]Tag::type()=.
 
 * Footnotes
 
 [fn:1] [[https://minecraft.fandom.com/el/wiki/Anvil_file_format][Minecraft Wiki: Anvil file format]].
+
+[fn:2]End tag is excluded from the list since it is useless and dangerous to keep in memory as a =class= or =struct=, except for one case (list of end tags) where it is useless as a separate type either.
+
+[fn:3] =ListTag<ListTag<...> >= is totally possible and in fact is part of minecraft files.
+
+Even though the nested =ListTag= has a defined type, that type is undefined at a parent level (well, it is defined, but it's a list, which is ambigious).
+
+The above makes =ListTag= recursive and multitype.
