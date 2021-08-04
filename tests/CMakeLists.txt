@@ -4,7 +4,8 @@ pkg_search_module(GTEST REQUIRED gtest_main)
 add_executable(nbt-test test.cpp
   sbin.cpp
   primitive.cpp
-  array.cpp)
+  array.cpp
+  list.cpp)
 
 target_link_libraries(nbt-test
   PUBLIC nbt-blacksmith

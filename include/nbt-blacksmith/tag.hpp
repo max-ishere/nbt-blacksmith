@@ -45,7 +45,7 @@ namespace blacksmith {
     stream >> t.tag.payload;
     return stream;
   }
-
+  
   bool operator==(const Tag&, const Tag&);
   
   enum nbt_type : uint8_t

@@ -1,7 +1,10 @@
 #pragma once
 #include <string>
 #include <vector>
+
+#define CUSTOM_NAMELESS_TAG
 #include "tag.hpp"
+
 namespace blacksmith {
   using std::string;
   using std::vector;
@@ -33,7 +36,11 @@ namespace blacksmith {
     ListTag() = default;
     ListTag(string name, vector<T> payload)
       : TypelessList(name), payload(payload) { }
+    ListTag(string name)
+      : TypelessList(name) { }
     ListTag(vector<T> payload)
+      : payload(payload) { }
+    ListTag (std::initializer_list<T> payload)
       : payload(payload) { }
     ListTag(const ListTag &other) = default;
     ListTag(ListTag &&other) noexcept = default;
@@ -72,16 +79,40 @@ namespace blacksmith {
   sbin& operator>>(sbin&, shared_ptr<TypelessList>&);
 
   template<class T>
-  sbin& operator<<(sbin& stream, const ListTag<T>& t) {
-    stream << t.kind() << t.name << t.type()
-	   << NamelessTag<const ListTag<T> >(t);
+  sbin& operator<<(sbin& stream,
+		   const NamelessTag<const ListTag<ListTag<T> > > &t) {
+    stream << t.tag.type()
+	   << (int32_t) t.tag.payload.size();
+    for (const ListTag<T> &i : t.tag.payload) {
+      const NamelessTag<const ListTag<T> > const_i (i);
+      stream << const_i;
+    }
     return stream;
   }
   
   template<class T>
+  sbin& operator<<(sbin& stream,
+		   const NamelessTag<const ListTag<T> > &t) {
+    stream << t.tag.type()
+	   << (int32_t) t.tag.payload.size();
+    for (const T &i : t.tag.payload)
+      stream << i;
+    return stream;
+  }
+
+  template<class T>
+  sbin& operator<<(sbin& stream, const ListTag<T>& t) {
+    stream << t.kind() << t.name;
+    const NamelessTag<const ListTag<T> > data(t);
+    stream << data;
+    return stream;
+  }
+
+  template<class T>
   sbin& operator>>(sbin& stream, ListTag<T>& t) {
     if (stream.peek() != t.kind())
       return stream;
+    
     auto cur = stream.cur();
     stream.get();
 
@@ -104,4 +135,10 @@ namespace blacksmith {
     return (lhs.name == rhs.name &&
 	    lhs.payload == rhs.payload);
   }
+
+  template<class T>
+  uint8_t ListTag<T >::type() const {
+    return nbt_type::LIST;
+  }
+  
 }

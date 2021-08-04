@@ -14,6 +14,8 @@ namespace blacksmith {
     ArrayTag() = default;
     ArrayTag(string name, vector<T> payload)
       : Tag(name), payload(payload) { }
+    ArrayTag(string name)
+      : Tag(name) { }
     ArrayTag(vector<T> payload)
       : payload(payload) { }
     ArrayTag(const ArrayTag &other) = default;
@@ -34,8 +36,10 @@ namespace blacksmith {
 
   template<class T>
   sbin& operator<<(sbin& stream, const ArrayTag<T>& t) {
-    stream << t.type() << t.name
-	   << NamelessTag<const ArrayTag<T> >(t);
+    stream << t.type() << t.name;
+    const NamelessTag<const ArrayTag<T> > data(t);
+    stream << data;
+
     return stream;
   }  
   template<class T>

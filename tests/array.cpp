@@ -11,8 +11,8 @@ using namespace blacksmith;
 
 TEST(array, serialise) {  
   for (uint8_t size = 0; size <= 2; size++) {
-    sbin stream;
-    sbin expected;
+    sbin stream,
+      expected;
 
     expected << nbt_type::INT_ARRAY
 	     << "abc"
