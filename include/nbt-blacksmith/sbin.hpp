@@ -98,11 +98,15 @@ namespace blacksmith {
     bin.insert(bin.end(), first, last);
     it = bin.begin();
   }
-
+  
   sbin& operator<<(sbin& stream, const string& str);  
   sbin& operator>>(sbin& stream, string& str);
 
-  sbin& operator<<(sbin& stream, const char* str);  
+  // only intended for use with "quoted" string literals
+  sbin& operator<<(sbin& stream, const char* str);
+  // use `operator >> std::string` instead,
+  // this is `= delete` to not have to deal with
+  // memory leaks.
   sbin& operator>>(sbin& stream, char* str) = delete;
   
   sbin& operator<<(sbin& stream, const float& f);  
@@ -114,25 +118,21 @@ namespace blacksmith {
   template<class T>
   sbin& operator<<(sbin& stream, const vector<T>& t) {
     stream << (int32_t)t.size();
-    for (const T& tt : t) 
+    for (const T& tt : t)
       stream << tt;
     return stream;
   }
 
   template<class T>
   sbin& operator>>(sbin& stream, vector<T>& t) {
-    int32_t length = 0;
-    stream >> length;
-    t.resize(length);
+    int32_t size = 0;
+    stream >> size;
+    t.reserve(t.size() + size);
 
-    size_t i = 0;
-    for (T& tt : t) {
+    for (int32_t i = 0; i < size; i++) {
+      T tt;
       stream >> tt;
-      i++;
-      if (!stream) {
-	t.resize(i);
-	break;
-      }
+      t.push_back(tt);
     }
     return stream;
   }

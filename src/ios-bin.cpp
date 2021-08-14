@@ -1,13 +1,17 @@
 #include "nbt-blacksmith/ios-bin.hpp"
 #include <iomanip>
 namespace blacksmith {
-  std::ostream& operator<<(ostream& os, sbin& stream) {
-    os << hex;
-    for (size_t i = 0; i < stream.size(); i++) {
-      os << setfill('0') << setw(2) << (int) stream.get() << " ";
+  std::ostream& operator<<(ostream& os, const sbin& stream) {
+    os << hex << setfill('0');
 
-      if ((i+1) % 8 == 0) os << " ";
-      if ((i+1) % 16 == 0) os << "\n";
+    size_t count = 0;
+    for (const uint8_t &i : stream) {
+      os << setw(2) << (int) i << " ";
+
+      if ((count+1) % 8 == 0) os << " ";
+      if ((count+1) % 16 == 0) os << "\n";
+
+      ++count;
     }
     os << dec << setfill(' ');
     return os;
@@ -92,7 +96,7 @@ namespace blacksmith {
   
   ostream& operator<<(ostream& os, const shared_ptr<Tag>& t) {
     if (t.get() == nullptr) {
-      std::cerr << "Trying to display nullptr:" << __FUNCTION__ << " in " << __FILE__;
+      std::cerr << "Trying to display nullptr from function: " << __FUNCTION__ << " in file: " << __FILE__;
       exit(1);
     }
     switch (t->kind()) {

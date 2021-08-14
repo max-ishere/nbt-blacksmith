@@ -49,5 +49,4 @@ namespace blacksmith {
     return (lhs.name == rhs.name &&
 	    lhs.payload == rhs.payload);
   }
-
 }

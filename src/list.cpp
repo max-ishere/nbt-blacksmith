@@ -133,6 +133,8 @@ namespace blacksmith {
   sbin& operator<<(sbin& stream, const ListTag<void>& t) {
     stream << t.kind() << t.name << t.type()
 	   << t.length;
+#warning "May have missing trailing 0"
+    
     return stream;
   }
   sbin& operator>>(sbin& stream, ListTag<void>& t) {

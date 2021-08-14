@@ -2,6 +2,51 @@
 
 The =main()= funtion for google test is in =test.cpp=. This file gets linked with other files in =tests/= to create the test executable. By default CMake will run google test on every build for conviience. Following is a list of tested objects.
 
+/Please note:/ that I could have made a mistake while writing this document or a test that verifies it. Thus you should use this as general reference and if something doesnt seem quite as you expected use the tests to see what is actually happening and report if this doc doesn't match them. Basically tests never lie, /but they could be written incorrectly/.
+
+* PrimitiveTag<T>
+
+Range of supported types for =T= can be found in =test.hpp= or in a list below.
+
+# TODO: move supported types into a separate file
+| type of =T= | NBT spec name | NBT type ID |
+|-------------+---------------+-------------|
+| uint8_t     | Byte          |           1 |
+| int16_t     | Short         |           2 |
+| int32_t     | Int           |           3 |
+| int64_t     | Long          |           4 |
+| float       | Float         |           4 |
+| double      | Double        |           5 |
+| string      | String        |           6 |
+
+Constructing a different type of =PrimitiveTag<T>= will result in =undefined reference to 'blacksmith::PrimitiveTag<...>::type() const'= (where =...= is your type thats not on the list).
+
+* ArrayTag<T>
+
+Don't confuse with ListTag<T>. ArrayTag supports types below.
+
+| type of =T= | NBT spec name | NBT type ID |
+|-------------+---------------+-------------|
+| uint8_t     | Byte Array    |           7 |
+| int32_t     | Int           |          11 |
+| int64_t     | Long          |          12 |
+
+* ListTag<T>
+
+A list of any NBT tag type (below). Also please see [[NamelessTag<T>]].
+
+- PrimitiveTag
+- ArrayTag
+- ListTag
+- CompoundTag
+
+If you +know+, I mean expect, a certain type of list at compile time put the tag type as template parameter. 
+
+For example:
+#+begin_src C++
+ListTag<ListTag<uint8_t> > tag;
+#+end_src
+
 * sbin (Binary stream)
 
 =sbin= is one of the utility classes that is used for parsing and serialising NBT tags in this library. It's public funtions are described below.
@@ -103,6 +148,11 @@ Returns true if total amount of bytes in the stream is 0.
 
 Can be used to detect end of stream. If =cur()= points to =end()= or =size()= is 0 returns =true=. Otherwise =false=.
 
+
+* NamelessTag<T>
+
+Only used for changing the behavoir of =operator <<= or =operator >>= *at parsing time*, please dont an oblect containing this type or of this type.
+
 * Explanation of for (i <= 2)
 
 ** Loop coverage
@@ -116,3 +166,4 @@ Loop coverage (informally called the 0, 1, 2 test) says that if you have a loop 
 The above is the reason why I iterate from 0 to 2 or backwards. I want the =2= to be emphasis here.
 
 /This is a note to myself and others if you may have questions. I usually do when I see weird code./
+

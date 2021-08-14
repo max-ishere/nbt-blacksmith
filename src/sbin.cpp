@@ -161,7 +161,7 @@ namespace blacksmith {
       stream << *str++;
     return stream;
   }
-    
+
   sbin& operator<<(sbin& stream, const float& f) {
     stream << *(uint32_t*) &f;
     return stream;

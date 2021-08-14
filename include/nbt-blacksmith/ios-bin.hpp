@@ -11,7 +11,7 @@ namespace blacksmith {
   using std::hex;
   using std::dec;
 
-  std::ostream& operator<<(ostream& os, sbin& stream);
+  std::ostream& operator<<(ostream& os, const sbin& stream);
 
   template<class T>
   std::ostream& operator<<(ostream& os, const PrimitiveTag<T>& t) {

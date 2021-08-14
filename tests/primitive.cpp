@@ -5,35 +5,71 @@
 #include <nbt-blacksmith/tag.hpp>
 #include <nbt-blacksmith/sbin.hpp>
 #include <nbt-blacksmith/primitive.hpp>
+#include <nbt-blacksmith/ios-bin.hpp>
+#include "test.hpp"
 
-using namespace std;
-using namespace blacksmith;
-
-TEST(primitive, serialise) {
-  sbin stream;
-  PrimitiveTag<int16_t> tag("abc", 4);
+namespace blacksmith::test {
+  using std::vector;
   
-  stream << tag;
+  template<class T>
+  class PrimitiveTagTest : public ::testing::Test { };
 
-  sbin expected;
-  expected << nbt_type::SHORT
+  TYPED_TEST_SUITE(PrimitiveTagTest,
+		   PrimiteTagTypes,
+		   NBTtypenames);
+
+  TYPED_TEST(PrimitiveTagTest, Serialise) {
+    PrimitiveTag<TypeParam> tag("abc", 4);
+    
+    sbin expected;
+    expected << tag.type()
+	     << "abc"
+	     << (TypeParam) 4;
+    
+    sbin result;
+    result << tag;
+    
+    EXPECT_TRUE(result == expected);
+  }
+
+  TYPED_TEST(PrimitiveTagTest, Parse) {
+    sbin source;
+    PrimitiveTag<TypeParam> tag;
+
+    source << tag.type()
 	   << "abc"
-	   << (uint16_t) 4;
+	   << (TypeParam) 4;
 
-  EXPECT_TRUE(stream == expected);
-}
+    ASSERT_EQ(source.cur(), source.begin());
+    source >> tag;
 
-TEST(primitive, parse) {
-  sbin source;
-  PrimitiveTag<int16_t> tag;
+    EXPECT_EQ(tag.name, "abc");
+    EXPECT_EQ(tag.payload, (TypeParam) 4);
+  }
 
-  source << nbt_type::SHORT
-	 << "abc"
-	 << (uint16_t) 4;
+  TYPED_TEST(PrimitiveTagTest, NamelessSerialise) {
+    sbin expected;
+    expected << (TypeParam)4;
 
-  EXPECT_EQ(source.cur(), source.begin());
-  source >> tag;
+    PrimitiveTag<TypeParam>tag (4);
+    NamelessTag<PrimitiveTag<TypeParam> > nameless_tag(tag);
+    
+    sbin result;
+    result << nameless_tag;
 
-  EXPECT_EQ(tag.name, "abc");
-  EXPECT_EQ((int) tag.payload, 4);
+    EXPECT_EQ(result, expected);
+  }
+
+  TYPED_TEST(PrimitiveTagTest, NamelessParse) {
+    sbin source;
+    source << (TypeParam)4;
+
+    PrimitiveTag<TypeParam>tag;
+    NamelessTag<PrimitiveTag<TypeParam> > nameless_tag(tag);
+
+    source >> nameless_tag;
+
+    EXPECT_EQ(tag.name, "");
+    EXPECT_EQ(tag.payload, 4);
+  }
 }

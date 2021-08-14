@@ -26,6 +26,7 @@ namespace blacksmith {
     ArrayTag& operator=(ArrayTag &&other) noexcept = default;
 
     int32_t size() const { return payload.size(); }
+    void push_back(const T& t) { payload.push_back(t); }
     
     virtual uint8_t kind() const final override {
       return nbt_kind::ARRAY_KIND;

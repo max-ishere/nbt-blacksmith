@@ -5,7 +5,8 @@ add_executable(nbt-test test.cpp
   sbin.cpp
   primitive.cpp
   array.cpp
-  list.cpp)
+  list.cpp
+  sbin_operators.cpp)
 
 target_link_libraries(nbt-test
   PUBLIC nbt-blacksmith

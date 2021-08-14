@@ -1,8 +1,6 @@
 #pragma once
 #include <string>
 #include <vector>
-
-#define CUSTOM_NAMELESS_TAG
 #include "tag.hpp"
 
 namespace blacksmith {
@@ -48,10 +46,13 @@ namespace blacksmith {
 
     ListTag& operator=(const ListTag &other) = default;
     ListTag& operator=(ListTag &&other) noexcept = default;
+
+    int32_t size() { return static_cast<int32_t>(payload.size());}
+    T operator[](int32_t i) { return payload[i]; }
+    void push_back(const T &t) { payload.push_back(t); }
     
     virtual uint8_t type() const final override;
   };
-  
   
   template<>
   class ListTag<void> : public TypelessList {
@@ -101,6 +102,12 @@ namespace blacksmith {
   }
 
   template<class T>
+  sbin& operator<<(sbin& stream, const NamelessTag<ListTag<T> >& t) {
+    stream << t.tag.type() << t.tag.payload;
+    return stream;
+  }
+  
+  template<class T>
   sbin& operator<<(sbin& stream, const ListTag<T>& t) {
     stream << t.kind() << t.name;
     const NamelessTag<const ListTag<T> > data(t);
@@ -109,6 +116,34 @@ namespace blacksmith {
   }
 
   template<class T>
+  sbin& operator>>(sbin& stream, NamelessTag<ListTag<ListTag<T> > > &t) {
+    if (stream.peek() != t.tag.type())
+      return stream;
+    stream.get();
+
+    int32_t size = 0;
+    stream >> size;
+    for (int32_t i = 0; i < size; i++) {
+      ListTag<T> tt;
+      NamelessTag<ListTag<T> > nameless_tt(tt);
+      stream >> nameless_tt;
+      t.tag.push_back(tt);
+    }
+    return stream;
+  }
+
+  template<class T>
+  sbin& operator>>(sbin& stream, NamelessTag<ListTag<T> > &t) {   
+    if (stream.peek() != t.tag.type())
+      return stream;
+    stream.get();
+
+    stream >> t.tag.payload;
+    
+    return stream;
+  }
+  
+  template<class T>
   sbin& operator>>(sbin& stream, ListTag<T>& t) {
     if (stream.peek() != t.kind())
       return stream;
@@ -116,13 +151,17 @@ namespace blacksmith {
     auto cur = stream.cur();
     stream.get();
 
-    stream >> t.name;
-    if (stream.get() != t.type()) {
+    string name;
+    stream >> name;
+    if (stream.peek() != t.type()) {
       stream.seek(cur);
       return stream;
     }
-
-    stream >> NamelessTag<ListTag<T> >(t);
+    
+    t.name = name;
+    NamelessTag<ListTag<T> > nameless_t(t);
+    
+    stream >> nameless_t;
     return stream;
   }
 
