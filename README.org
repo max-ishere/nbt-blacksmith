@@ -4,6 +4,8 @@
 
 A C++ library for parsing, editing and serialising NBT data used in Java edition Minecraft.
 
+*I should warn you that this is not a finished library. Also I might rewrite it later but for now I stopped working on this*
+
 * Documentation
 
 Currently the only docs are in =tests/README.org=, I will be figuring out a way to generate a github.io soon probably.
